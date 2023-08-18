@@ -1,0 +1,51 @@
+﻿
+
+<div class="modal fade" id="modalCriar" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="mb-3">
+                        <label for="recipient-name" class="col-form-label">Email:</label>
+                        <input class="input_email_criar form-control" />
+                    </div>
+                    <div class="mb-3">
+                        <label for="message-text" class="col-form-label">Password:</label>
+                        <input class="input_password_criar form-control"/>
+                    </div>
+                    <button type="button" class="btn btn-primary criar-post">Salvar</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+
+    let criarPost = document.querySelector(".criar-post");
+
+
+    criarPost.addEventListener("click", () => {
+
+       let  email = document.querySelector(".input_email_criar"),
+           password = document.querySelector(".input_password_criar");
+
+        let formData = new FormData();
+        formData.append("email", email.value);
+        formData.append("password", password.value);
+
+        fetch("/user/criarpost/", {
+            method: "POST",
+            body: formData
+        }).then((res) => {
+          window.location.href = "/user/"
+        }).catch((e) => {
+            console.log(e)
+        })
+    })
+</script>
+
+

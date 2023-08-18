@@ -1,0 +1,54 @@
+﻿
+
+<div class="modal fade" id="modalEditar" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="mb-3">
+                        <label for="recipient-name" class="col-form-label">Email:</label>
+                        <input class="input_email form-control" />
+                    </div>
+                    <div class="mb-3">
+                        <label for="message-text" class="col-form-label">Password:</label>
+                        <input class="input_password form-control"/>
+                    </div>
+                    <button type="button" class="btn btn-primary editar-post">Editar</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+
+    let editarPost = document.querySelector(".editar-post");
+
+
+    editarPost.addEventListener("click", () => {
+        let btn = document.querySelector(".editar-post");
+
+       let  email = document.querySelector(".input_email"),
+           password = document.querySelector(".input_password"),
+           usuario = document.querySelector(".selct_usuario_criar");
+
+        let formData = new FormData();
+        formData.append("id", btn.getAttribute("id"));
+        formData.append("email", email.value);
+        formData.append("password", password.value);
+
+        fetch("/user/editarpost/", {
+            method: "POST",
+            body: formData
+        }).then((res) => {
+          window.location.href = "/user/"
+        }).catch((e) => {
+            console.log(e)
+        })
+    })
+</script>
+
+

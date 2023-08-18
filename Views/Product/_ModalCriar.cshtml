@@ -1,0 +1,62 @@
+﻿
+
+<div class="modal fade" id="modalCriar" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="mb-3">
+                        <label for="recipient-name" class="col-form-label">Name:</label>
+                        <input class="input_name_criar form-control" />
+                    </div>
+                    <div class="mb-3">
+                        <label for="message-text" class="col-form-label">Prince:</label>
+                        <input class="input_prince_criar form-control" />
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="message-text" class="col-form-label">Usuário:</label>
+                        <select class="form-select selct_usuario_criar">
+                            <option
+                                    hidden
+                                    disabled
+                                    >Selecione um usuário</option>
+                        </select>
+                    </div>
+                    <button type="button" class="btn btn-primary criar-post">Salvar</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+
+    let criarPost = document.querySelector(".criar-post");
+
+    criarPost.addEventListener("click", () => {
+
+       let  name = document.querySelector(".input_name_criar"),
+           prince = document.querySelector(".input_prince_criar"),
+           usuario = document.querySelector(".selct_usuario_criar");
+
+        let formData = new FormData();
+        formData.append("userId", usuario.options[usuario.selectedIndex].value);
+        formData.append("name", name.value);
+        formData.append("prince", prince.value);
+
+        fetch("/product/criarpost/", {
+            method: "POST",
+            body: formData
+        }).then((res) => {
+          window.location.href = "/product/"
+        }).catch((e) => {
+            console.log(e)
+        })
+    })
+</script>
+
+

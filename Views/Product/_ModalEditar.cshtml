@@ -1,0 +1,53 @@
+﻿
+
+<div class="modal fade" id="modalEditar" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="mb-3">
+                        <label for="recipient-name" class="col-form-label">Name:</label>
+                        <input class="input_name form-control" />
+                    </div>
+                    <div class="mb-3">
+                        <label for="message-text" class="col-form-label">Prince:</label>
+                        <input class="input_prince form-control" />
+                    </div>
+                    <button type="button" class="btn btn-primary editar-post">Editar</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+
+    let editarPost = document.querySelector(".editar-post");
+
+
+    editarPost.addEventListener("click", () => {
+        let btn = document.querySelector(".editar-post");
+
+        let name = document.querySelector(".input_name"),
+            prince = document.querySelector(".input_prince");
+
+        let formData = new FormData();
+        formData.append("id", btn.getAttribute("id"));
+        formData.append("name", name.value);
+        formData.append("prince", prince.value);
+
+        fetch("/product/editarpost/", {
+            method: "POST",
+            body: formData
+        }).then((res) => {
+            window.location.href = "/product/"
+        }).catch((e) => {
+            console.log(e)
+        })
+    })
+</script>
+
+

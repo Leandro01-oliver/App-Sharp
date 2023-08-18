@@ -1,0 +1,201 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+    List<Product> products = ViewBag.Products;
+    int currentPage = ViewBag.CurrentPage;
+    int totalPages = ViewBag.TotalPages;
+    int itemsPerPage = ViewBag.ItemsPerPage;
+}
+
+<style>
+    .acoes {
+        display: flex;
+        justify-content: center;
+        gap: 1rem
+    }
+</style>
+
+<div class="w-100 d-flex justify-content-end mb-5">
+    <button class="criar btn  btn-success" data-bs-toggle="modal" data-bs-target="#modalCriar">Cadastrar</button>
+</div>
+
+@if (products.Count() != 0)
+{
+    <table class="table">
+        <tr>
+            <th>
+                Email
+            </th>
+            <th>
+                Password
+            </th>
+            <th class="text-center">
+                Ações
+            </th>
+        </tr>
+        @foreach (var item in products)
+        {
+            <tr>
+                <td>
+                    @item.Name
+                </td>
+                <td>
+                    @item.Prince
+                </td>
+                <td class="text-center acoes">
+                    <button class="btn  btn-primary editar-get" data-bs-toggle="modal" data-bs-target="#modalEditar" id="@item.Id">
+                        Editar
+                    </button>
+
+                    <button class="btn btn-danger exluir-post" id="@item.Id">
+                        Excluir
+                    </button>
+                </td>
+            </tr>
+        }
+
+
+    </table>
+    @Html.Partial("_ModalEditar")
+
+    @if (totalPages > 1) { 
+        <nav aria-label="Page navigation">
+            <ul class="pagination justify-content-center">
+                <li class="page-item @(currentPage == 1 ? "disabled" : "")">
+                    <a class="page-link" href="/user/index?page=@(currentPage - 1)&itemsPerPage=@itemsPerPage" aria-label="Previous">
+                        <span aria-hidden="true">&laquo;</span>
+                        <span class="visually-hidden">Previous</span>
+                    </a>
+                </li>
+                @if (currentPage > 3)
+                {
+                    <li class="page-item">
+                        <a class="page-link" href="/user/index?page=1&itemsPerPage=@itemsPerPage">1</a>
+                    </li>
+                    @if (currentPage > 4)
+                    {
+                        <li class="page-item disabled">
+                            <span class="page-link">...</span>
+                        </li>
+                    }
+                }
+                @for (int i = Math.Max(2, currentPage - 2); i <= Math.Min(totalPages - 1, currentPage + 2); i++)
+                {
+                    <li class="page-item @(i == currentPage ? "active" : "")">
+                        <a class="page-link" href="/user/index?page=@i&itemsPerPage=@itemsPerPage">@i</a>
+                    </li>
+                }
+                @if (currentPage < totalPages - 2)
+                {
+                    @if (currentPage < totalPages - 3)
+                    {
+                        <li class="page-item disabled">
+                            <span class="page-link">...</span>
+                        </li>
+                    }
+                    <li class="page-item">
+                        <a class="page-link" href="/user/index?page=@totalPages&itemsPerPage=@itemsPerPage">@totalPages</a>
+                    </li>
+                }
+                <li class="page-item @(currentPage == totalPages ? "disabled" : "")">
+                    <a class="page-link" href="/user/index?page=@(currentPage + 1)&itemsPerPage=@itemsPerPage" aria-label="Next">
+                        <span aria-hidden="true">&raquo;</span>
+                        <span class="visually-hidden">Next</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    
+    }
+}
+else
+{
+    <p>Não produtos</p>
+}
+
+
+@Html.Partial("_ModalCriar")
+
+<script>
+
+    let editarGet = document.querySelectorAll(".editar-get"),
+        excluir = document.querySelectorAll(".exluir-post"),
+        criar = document.querySelector(".criar");
+
+
+    editarGet.forEach(button => {
+        button.addEventListener("click", () => {
+            let userId = button.getAttribute("id");
+            fetch(`/product/editarget/${userId}`)
+                .then((res) => res.json())
+                .then((data) => {
+
+                    let modal = new bootstrap.Modal(document.getElementById("modalEditar"));
+                    modal.show();
+
+                    let input_name = document.querySelector(".input_name"),
+                        input_prince = document.querySelector(".input_prince");
+
+                    input_name.value = data.name;
+
+                    input_prince.value = data.prince;
+
+                    let btn = document.querySelector(".editar-post");
+                    btn.setAttribute("id", userId)
+
+                })
+                .catch(error => {
+                    console.log(error);
+                });
+        });
+    });
+
+
+    excluir.forEach(button => {
+        button.addEventListener("click", () => {
+
+            let formData = new FormData();
+
+            formData.append("id", button.getAttribute("id"));
+
+            fetch("/product/excluir/",
+                {
+                    method: "POST",
+                    body: formData
+                }
+            ).then((res) => {
+                window.location.href = "/product/"
+            })
+                .catch(error => {
+                    console.log(error);
+                });
+        })
+    });
+
+
+    criar.addEventListener("click", () => {
+        let modal = new bootstrap.Modal(document.getElementById("modalCriar")),
+            usuario = document.querySelector(".selct_usuario_criar");
+
+        modal.show();
+
+        fetch("/product/getall/")
+            .then((res) => res.json())
+            .then((data) => {
+                data.map((d) => {
+                    console.log(usuario)
+                    usuario.innerHTML += `
+                        <option value="${d.id}">
+                               ${d.email}
+                        </option>
+                    `
+                })
+               
+            }).catch((e) => {
+                console.log(e)
+            })
+    })
+
+</script>
+
+
+
